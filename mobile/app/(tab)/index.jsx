@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, TouchableOpacity } from 'react-native'
+import { View, Text, ScrollView, TouchableOpacity, FlatList,RefreshControl} from 'react-native'
 import React from 'react'
 import { useState, useEffect } from "react";
 import { useRouter } from "expo-router";
@@ -7,11 +7,13 @@ import { homeStyles } from "../../assets/styles/home.styles";
 import { Image } from "expo-image";
 import { Ionicons } from "@expo/vector-icons";
 import { COLORS } from "../../constants/colors";
+import CategoryFilter from '../../components/CategoryFilter';
+import RecipeCard from '../../components/RecipeCard';
 
 
 const HomeScreen = () => {
   const router = useRouter();
-  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState("Random");
   const [recipes, setRecipes] = useState([]);
   const [categories, setCategories] = useState([]);
   const [featuredRecipe, setFeaturedRecipe] = useState(null);
@@ -35,8 +37,10 @@ const loadData = async () => {
       description: cat.strCategoryDescription,
     }));
 
+
     setCategories(transformedCategories);
 
+    
     const transformedMeals = randomMeals.map((meal) => MealAPI.transformMealData(meal)).filter((meal) => meal !== null);
 
     setRecipes(transformedMeals);
@@ -68,6 +72,13 @@ const handleCategorySelect = async ( category ) => {
   await loadCategoryData(category);
 };
 
+const onRefresh = async () => {
+  setRefreshing(true);
+  // await sleep(2000);
+  await loadData();
+  setRefreshing(false);
+};
+
 useEffect(() => {
   loadData();
 },[])
@@ -76,7 +87,16 @@ useEffect(() => {
     <View style={homeStyles.container}>
       <ScrollView
       showsVerticalScrollIndicator={false}
-      refreshControl={() => {}}
+
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+          tintColor={COLORS.primary}
+        />
+      }
+
+
       contentContainerStyle= {homeStyles.scrollContent}
       >
 
@@ -98,7 +118,7 @@ useEffect(() => {
           />
 
         <Image 
-          source = {require("../../assets/images/pork.png")}
+          source = {require("../../assets/images/cow.png")}
           style={{
             width: 100,
             height: 100,
@@ -143,11 +163,48 @@ useEffect(() => {
                         </View>
                       )}
                 </View>
+
+
               </View>
             </View>
           </View>
         </TouchableOpacity>
         </View>}
+      
+      {categories.length > 0 && (
+        <CategoryFilter 
+          categories={categories}
+          selectedCategory={selectedCategory}
+          onSelectCategory={handleCategorySelect}
+        />
+      )}
+
+      <View style={homeStyles.recipesSection}>
+        <View style={homeStyles.sectionHeader}>
+          <Text style={homeStyles.sectionTitle}>{selectedCategory}</Text>
+        </View>
+
+        {recipes.length > 0 ? (
+            <FlatList
+              data={recipes}
+              renderItem={({ item }) => <RecipeCard recipe={item} />}
+              keyExtractor={(item) => item.id.toString()}
+              numColumns={2}
+              columnWrapperStyle={homeStyles.row}
+              contentContainerStyle={homeStyles.recipesGrid}
+              scrollEnabled={false}
+              // ListEmptyComponent={}
+            />
+          ) : (
+            <View style={homeStyles.emptyState}>
+              <Ionicons name="restaurant-outline" size={64} color={COLORS.textLight} />
+              <Text style={homeStyles.emptyTitle}>No recipes found</Text>
+              <Text style={homeStyles.emptyDescription}>Try a different category</Text>
+            </View>
+          )}
+
+
+      </View>
       </ScrollView>
     </View>
   )
