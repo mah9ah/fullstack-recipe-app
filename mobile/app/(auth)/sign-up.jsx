@@ -7,10 +7,11 @@ import {
   ScrollView,
   TextInput,
   TouchableOpacity,
+  Animated,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { useSignUp } from "@clerk/clerk-expo";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { authStyles } from "../../assets/styles/auth.styles";
 import { Image } from "expo-image";
 import { COLORS } from "../../constants/colors";
@@ -26,6 +27,26 @@ const SignUpScreen = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [pendingVerification, setPendingVerification] = useState(false);
+
+  // Animated value for floating effect
+  const floatAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(floatAnim, {
+          toValue: -15,
+          duration: 2000,
+          useNativeDriver: true,
+        }),
+        Animated.timing(floatAnim, {
+          toValue: 0,
+          duration: 2000,
+          useNativeDriver: true,
+        }),
+      ])
+    ).start();
+  }, [floatAnim]);
 
   const handleSignUp = async () => {
     if (!email || !password) return Alert.alert("Error", "Please fill in all fields");
@@ -63,14 +84,27 @@ const SignUpScreen = () => {
           contentContainerStyle={authStyles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
-          {/* Image Container */}
-          <View style={authStyles.imageContainer}>
+          {/* Animated Image Container with glow and float */}
+          <Animated.View
+            style={[
+              authStyles.imageContainer,
+              {
+                shadowColor: COLORS.primary,
+                shadowOffset: { width: 0, height: 10 },
+                shadowOpacity: 0.8,
+                shadowRadius: 20,
+                elevation: 20, // Android shadow
+                borderRadius: 160,
+                transform: [{ translateY: floatAnim }],
+              },
+            ]}
+          >
             <Image
               source={require("../../assets/images/i2.png")}
               style={authStyles.image}
               contentFit="contain"
             />
-          </View>
+          </Animated.View>
 
           <Text style={authStyles.title}>Create Account!</Text>
 

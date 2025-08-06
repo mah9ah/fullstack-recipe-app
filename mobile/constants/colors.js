@@ -8,6 +8,18 @@ const coffeeTheme = {
     card: "#FFFFFF",
     shadow: "#000000",
   };
+
+  const gourmetTheme = {
+    primary: "#D9480F",         // Rich orange-red for food accents
+    background: "#0D0D0D",      
+    text: "#4B2E2E",            // Deep brown for elegant food typography
+    border: "#FFD6C2",          // Soft peach
+    white: "#FFFFFF",
+    textLight: "#A68164",       // Muted brown
+    card: "#FFEDE3",            // Light peachy card
+    shadow: "#E0B699",          // Soft orange-beige shadow
+  };
+  
   
   const forestTheme = {
     primary: "#2E7D32",
@@ -85,6 +97,31 @@ const coffeeTheme = {
     card: "#FFFFFF",
     shadow: "#000000",
   };
+
+  const cyberTheme = {
+    primary: "#0FF0FC",         // Neon cyan
+    background: "#0D0D0D",      // Near-black background
+    text: "#FFFFFF",            // High contrast white
+    border: "#2D2D2D",          // Dark gray border
+    white: "#FFFFFF",
+    textLight: "#A0A0A0",       // Soft gray
+    card: "#1A1A1A",            // Dark card background
+    shadow: "#00FFFF",          // Glow-style shadow
+  };
+
+  const darkpurpleTheme = {
+    primary: "#9F00FF",        // Neon violet for buttons or links
+    background: "#2A003F",     // Deep purple background
+    text: "#EAD6FF",           // Light lavender for readable text
+    border: "#3E0E61",         // Dark plum for borders
+    white: "#FFFFFF",
+    textLight: "#BFA2DB",      // Soft lavender for subtle text
+    card: "#3E0E61",           // Darker card background
+    shadow: "#A020F0",         // Soft violet shadow/glow
+    footer: "#000000",         // Extra dark grape tone for footer
+  };
+  
+  
   
   export const THEMES = {
     coffee: coffeeTheme,
@@ -95,7 +132,12 @@ const coffeeTheme = {
     mint: mintTheme,
     midnight: midnightTheme,
     roseGold: roseGoldTheme,
+    gourmet: gourmetTheme,
+    cyber: cyberTheme,
+    darkpurple: darkpurpleTheme
   };
+
+  
   
   // 👇 change this to switch theme
-  export const COLORS = THEMES.midnight;
+  export const COLORS = THEMES.darkpurple;

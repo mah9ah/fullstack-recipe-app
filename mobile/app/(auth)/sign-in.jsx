@@ -1,6 +1,6 @@
 import { useSignIn } from "@clerk/clerk-expo";
 import { useRouter } from "expo-router";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -10,6 +10,7 @@ import {
   ScrollView,
   TextInput,
   TouchableOpacity,
+  Animated,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -27,6 +28,27 @@ const SignInScreen = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  // Animated value for floating effect
+  const floatAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    // Create a looping animation that moves the image up and down
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(floatAnim, {
+          toValue: -15,
+          duration: 2000,
+          useNativeDriver: true,
+        }),
+        Animated.timing(floatAnim, {
+          toValue: 0,
+          duration: 2000,
+          useNativeDriver: true,
+        }),
+      ])
+    ).start();
+  }, [floatAnim]);
 
   const handleSignIn = async () => {
     if (!email || !password) {
@@ -69,13 +91,26 @@ const SignInScreen = () => {
           contentContainerStyle={authStyles.scrollContent}
           showsVerticalScrollIndicator={true}
         >
-          <View style={authStyles.imageContainer}>
+          <Animated.View
+            style={[
+              authStyles.imageContainer,
+              {
+                shadowColor: COLORS.primary,
+                shadowOffset: { width: 0, height: 10 },
+                shadowOpacity: 0.8,
+                shadowRadius: 20,
+                elevation: 20, // Android shadow
+                borderRadius: 160,
+                transform: [{ translateY: floatAnim }],
+              },
+            ]}
+          >
             <Image
               source={require("../../assets/images/i1.png")}
               style={authStyles.image}
               contentFit="contain"
             />
-          </View>
+          </Animated.View>
 
           <Text style={authStyles.title}>Welcome Back!</Text>
 

@@ -1,5 +1,5 @@
 import { useSignUp } from "@clerk/clerk-expo";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   View,
   Text,
@@ -9,14 +9,36 @@ import {
   ScrollView,
   TextInput,
   TouchableOpacity,
+  Animated,
 } from "react-native";
 import { authStyles } from "../../assets/styles/auth.styles";
 import { Image } from "expo-image";
 import { COLORS } from "../../constants/colors";
+
 const VerifyEmail = ({ email, onBack }) => {
   const { isLoaded, signUp, setActive } = useSignUp();
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
+
+  // Animated value for floating effect
+  const floatAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(floatAnim, {
+          toValue: -15,
+          duration: 2000,
+          useNativeDriver: true,
+        }),
+        Animated.timing(floatAnim, {
+          toValue: 0,
+          duration: 2000,
+          useNativeDriver: true,
+        }),
+      ])
+    ).start();
+  }, [floatAnim]);
 
   const handleVerification = async () => {
     if (!isLoaded) return;
@@ -50,14 +72,27 @@ const VerifyEmail = ({ email, onBack }) => {
           contentContainerStyle={authStyles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
-          {/* Image Container */}
-          <View style={authStyles.imageContainer}>
+          {/* Image Container with glow and floating animation */}
+          <Animated.View
+            style={[
+              authStyles.imageContainer,
+              {
+                shadowColor: COLORS.primary,
+                shadowOffset: { width: 0, height: 10 },
+                shadowOpacity: 0.8,
+                shadowRadius: 20,
+                elevation: 20, // for Android shadow
+                borderRadius: 160,
+                transform: [{ translateY: floatAnim }],
+              },
+            ]}
+          >
             <Image
               source={require("../../assets/images/i3.png")}
               style={authStyles.image}
               contentFit="contain"
             />
-          </View>
+          </Animated.View>
 
           {/* Title */}
           <Text style={authStyles.title}> Please Verify Your Email</Text>
