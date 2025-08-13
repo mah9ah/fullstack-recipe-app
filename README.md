@@ -43,3 +43,5 @@ Clerk – Authentication and email verification
 JavaScript / JSX – Application logic and UI
 Expo Image – Optimized image loading
 Custom Themes – Light/Dark UI modes
+
+## credits to codesistency for help on this project
